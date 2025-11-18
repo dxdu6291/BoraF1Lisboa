@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Beck2Lisbon - Nossa Tribo</title>
     <style>
         :root {
@@ -15,81 +15,123 @@
             --highlight: #FFF8E1;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.7;
+            line-height: 1.6;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
+            overflow-x: hidden; /* Evita scroll lateral indesejado */
+            min-height: 100vh;
+            position: relative;
         }
 
-        .container {
-            max-width: 750px; /* Limita a largura em telas grandes */
-            margin: 0 auto; /* Centraliza na tela */
-            padding: 40px;
+        /* ANIMAÇÃO: Estilo da folha */
+        .leaf {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none; /* O mouse passa através delas */
+            user-select: none;
+            z-index: 0; /* Fica atrás do cartão */
+            opacity: 1;
+            transition: transform 1s ease-out, opacity 1s ease-out;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .main-card {
+            max-width: 700px;
+            margin: 0 auto;
             background-color: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(85, 139, 47, 0.1);
-            width: 100%; /* Garante que o container use o espaço disponível */
-            box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(85, 139, 47, 0.15);
+            overflow: hidden; /* Garante que a imagem respeite as bordas arredondadas */
+            position: relative;
+            z-index: 10; /* Garante que o cartão fique sobre as folhas */
         }
 
-        /* AJUSTE DA IMAGEM RESPONSIVA */
+        /* IMAGEM (BANNER) - CORREÇÃO DE RESPONSIVIDADE */
+        .banner-container {
+            width: 100%;
+            height: auto;
+            display: block;
+            background-color: #eee; /* Placeholder enquanto carrega */
+        }
+
         .banner-img {
-            width: 100%; /* A imagem ocupa 100% da largura do container */
-            height: auto; /* A altura se ajusta automaticamente (não distorce) */
-            display: block; /* Remove espaços em branco indesejados abaixo da imagem */
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover; /* Garante proporção correta */
         }
 
+        /* CONTEÚDO DE TEXTO (Padding separado da imagem) */
+        .content-wrapper {
+            padding: 40px;
+        }
+
+        /* TIPOGRAFIA E ELEMENTOS */
         h1 {
             color: var(--accent-green);
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
+            font-size: 2rem;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.5px;
             line-height: 1.2;
         }
 
         h2 {
             color: var(--accent-orange);
-            font-size: 1.5em;
+            font-size: 1.5rem;
             margin-top: 40px;
-            border-left: 5px solid var(--accent-green);
             padding-left: 15px;
+            border-left: 4px solid var(--accent-green);
         }
 
         h3 {
             color: #2c3e50;
+            font-size: 1.2rem;
             margin-top: 25px;
-            font-size: 1.2em;
         }
 
         p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
         }
 
+        /* COMPONENTES DE UI */
         .story-box {
             background-color: var(--highlight);
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 16px;
             border: 1px solid #FFE0B2;
             font-style: italic;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .highlight-box {
             background-color: #F1F8E9;
             padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            border-radius: 12px;
+            margin: 25px 0;
             border: 1px dashed var(--accent-green);
+            text-align: center;
         }
 
+        .admin-explanation {
+            font-size: 0.95rem;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            color: #666;
+            margin-top: 15px;
+            border-left: 4px solid #ccc;
+        }
+
+        /* LISTAS PERSONALIZADAS */
         ul {
             list-style: none;
             padding: 0;
@@ -97,7 +139,7 @@
 
         li {
             margin-bottom: 20px;
-            padding-left: 30px;
+            padding-left: 35px;
             position: relative;
         }
 
@@ -106,124 +148,187 @@
             position: absolute;
             left: 0;
             top: 2px;
+            font-size: 1.1em;
         }
 
         .btn-fake {
             display: inline-block;
             background-color: var(--accent-green);
             color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: bold;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             vertical-align: middle;
-            white-space: nowrap; /* Impede que o texto do botão quebre */
         }
 
         .disclaimer {
-            font-size: 0.85em;
-            color: #888;
+            font-size: 0.85rem;
+            color: #999;
             text-align: center;
             margin-top: 50px;
             border-top: 1px solid #eee;
             padding-top: 20px;
         }
 
-        .admin-explanation {
-            font-size: 0.95em;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            color: #666;
-            margin-top: 10px;
-        }
-
-        /* --- REGRAS ESPECÍFICAS PARA CELULAR (RESPONSIVIDADE) --- */
+        /* --- RESPONSIVIDADE MOBILE (BREAKPOINT) --- */
         @media (max-width: 600px) {
             body {
-                padding: 10px; /* Menos margem na borda da tela do celular */
-            }
-            
-            .container {
-                padding: 20px; /* Mais espaço interno para o texto respirar */
-                margin-top: 10px;
+                padding: 0; /* Remove margem do corpo no mobile */
+                background-color: var(--card-bg); /* Fundo unificado no mobile */
             }
 
-            h1 {
-                font-size: 1.8em; /* Título um pouco menor no celular */
+            .main-card {
+                box-shadow: none; /* Remove sombra no mobile para visual clean */
+                border-radius: 0; /* Cantos retos no mobile */
+                margin: 0;
             }
 
-            h2 {
-                font-size: 1.3em;
+            .content-wrapper {
+                padding: 25px 20px; /* Espaçamento lateral confortável mas menor */
             }
 
             .story-box {
-                padding: 15px; /* Caixa da história mais compacta */
+                padding: 20px;
             }
+
+            h1 { font-size: 1.7rem; }
+            h2 { font-size: 1.3rem; }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <img src="./images/banner.png" alt="Banner Beck2Lisbon" class="banner-img">
 
-        <div class="story-box">
-            <p><strong>Você sabe como é...</strong></p>
-            <p>A gente cruza o oceano em busca de algo novo, mas tem dias que o coração aperta querendo o velho e bom churrasco de domingo, a resenha sem fim e aquela risada alta que só a gente sabe dar.</p>
-            <p>O <strong>Beck2Lisbon</strong> nasceu disso. Não somos apenas um grupo de WhatsApp. Somos o "quintal de casa" longe de casa. Seja para relaxar, para debater a vida, ou curtir um bom momento, aqui o objetivo é um só: <strong>criar a família que a gente escolheu em Portugal.</strong></p>
-        </div>
-
-        <h1>👋 Bem-vindo à Família!</h1>
-        <p>Se você está lendo isso, é porque alguém confia muito em você. E isso já te torna especial para nós.</p>
+    <div class="main-card">
         
-        <p>Aqui não temos "chefes". Acreditamos que adultos livres e parceiros sabem cuidar do próprio espaço. Por isso, a partir de agora, <strong>você tem a chave da casa.</strong></p>
-
-        <div class="highlight-box">
-            <p style="text-align: center; margin: 0;">🎉 <strong>Você foi promovido a ADMIN!</strong> 🎉<br>
-            <em>(Isso significa liberdade, mas também parceria.)</em></p>
+        <div class="banner-container">
+            <img src="./images/banner.png" alt="Banner Beck2Lisbon" class="banner-img">
         </div>
 
-        <hr style="border: 0; height: 1px; background-color: #eee; margin: 40px 0;">
+        <div class="content-wrapper">
 
-        <h2>1. A Roda da Amizade (Como crescemos)</h2>
-        <p>O Beck2Lisbon cresce na base da amizade. Não tem burocracia: amigo de amigo, é amigo nosso. O objetivo é agregar gente boa para as resenhas e encontros.</p>
-        
-        <h3>Como trazer alguém pra "sala":</h3>
-        <ul>
-            <li><strong>Convide quem soma:</strong> Conhece alguém gente boa que mora em Portugal e curte uma boa resenha? Pode convidar! Sem restrições, o importante é a vibe.</li>
+            <div class="story-box">
+                <p><strong>Você sabe como é...</strong></p>
+                <p>A gente cruza o oceano em busca de algo novo, mas tem dias que o coração aperta querendo o velho e bom churrasco de domingo, a resenha sem fim e aquela risada alta que só a gente sabe dar.</p>
+                <p>O <strong>Beck2Lisbon</strong> nasceu disso. Não somos apenas um grupo de WhatsApp. Somos o "quintal de casa" longe de casa. Seja para relaxar, para debater a vida, ou curtir um bom momento, aqui o objetivo é um só: <strong>criar a família que a gente escolheu em Portugal.</strong></p>
+            </div>
+
+            <h1>👋 Bem-vindo à Família!</h1>
+            <p>Se você está lendo isso, é porque alguém confia muito em você. E isso já te torna especial para nós.</p>
             
-            <li><strong>Você é Padrinho/Madrinha:</strong> Ao trazer alguém, você assina embaixo. Se você convidou, você tem <strong>autonomia total</strong> para remover seu convidado se achar necessário, sem precisar de votação.</li>
+            <p>Aqui não temos "chefes". Acreditamos que adultos livres e parceiros sabem cuidar do próprio espaço. Por isso, a partir de agora, <strong>você tem a chave da casa.</strong></p>
+
+            <div class="highlight-box">
+                🎉 <strong>Você foi promovido a ADMIN!</strong> 🎉<br>
+                <span style="font-size: 0.9em; font-style: italic;">(Isso significa liberdade, mas também parceria.)</span>
+            </div>
+
+            <hr style="border: 0; height: 1px; background-color: #eee; margin: 40px 0;">
+
+            <h2>1. A Roda da Amizade (Como crescemos)</h2>
+            <p>O Beck2Lisbon cresce na base da amizade. Não tem burocracia: amigo de amigo, é amigo nosso. O objetivo é agregar gente boa para as resenhas e encontros.</p>
             
-            <li><strong>Passe a Chave (Essencial):</strong> Assim que seu amigo entrar, vá na lista de membros e clique em <span class="btn-fake">Tornar Admin</span>.</li>
-        </ul>
+            <h3>Como trazer alguém pra "sala":</h3>
+            <ul>
+                <li><strong>Convide quem soma:</strong> Conhece alguém gente boa que mora em Portugal e curte uma boa resenha? Pode convidar! Sem restrições, o importante é a vibe.</li>
+                
+                <li><strong>Você é Padrinho/Madrinha:</strong> Ao trazer alguém, você assina embaixo. Se você convidou, você tem <strong>autonomia total</strong> para remover seu convidado se achar necessário, sem precisar de votação.</li>
+                
+                <li><strong>Passe a Chave (Essencial):</strong> Assim que seu amigo entrar, vá na lista de membros e clique em <span class="btn-fake">Tornar Admin</span>.</li>
+            </ul>
 
-        <div class="admin-explanation">
-            <strong>💡 Por que tornar todo mundo Admin?</strong><br>
-            Primeiro, porque confiamos em quem está aqui. Segundo, para facilitar a vida: assim a gente não precisa ficar correndo para aprovar novos membros o tempo todo. O grupo anda sozinho! 😉
-        </div>
+            <div class="admin-explanation">
+                <strong>💡 Por que tornar todo mundo Admin?</strong><br>
+                Primeiro, porque confiamos em quem está aqui. Segundo, para facilitar a vida: assim a gente não precisa ficar correndo para aprovar novos membros o tempo todo. O grupo anda sozinho! 😉
+            </div>
 
-        <h2>2. Nossa Vibe (Convivência)</h2>
-        <p>Para manter o clima leve e a amizade fluindo, temos apenas 3 pilares inegociáveis:</p>
+            <h2>2. Nossa Vibe (Convivência)</h2>
+            <p>Para manter o clima leve e a amizade fluindo, temos apenas 3 pilares inegociáveis:</p>
 
-        <ul>
-            <li><strong>Identidade Preservada:</strong> O nome e a foto do grupo são nossa marca registrada. <strong style="color: #E65100;">Nunca altere a foto ou nome do grupo.</strong></li>
+            <ul>
+                <li><strong>Identidade Preservada:</strong> O nome e a foto do grupo são nossa marca registrada. <strong style="color: #E65100;">Nunca altere a foto ou nome do grupo.</strong></li>
+                
+                <li><strong>Democracia Real:</strong> Quer mudar a descrição? Criar um evento? Sugerir algo novo? Use as <strong>Enquetes</strong>. Aqui a maioria decide e a gente respeita.</li>
+                
+                <li><strong>Proteção do Grupo (Remoção):</strong> Se alguém quebrar a harmonia, resolvemos de duas formas:
+                    <br>A) <strong>Votação:</strong> O grupo decide junto.
+                    <br>B) <strong>O Padrinho Resolve:</strong> Se você convidou, você tem autonomia total para remover seu convidado, sem burocracia.
+                </li>
+            </ul>
+
+            <div class="disclaimer">
+                <p><strong>Dica Pro:</strong> Fique de olho no Drive e nos links de jogos. A diversão acontece lá também!</p>
+                <p><em>Beck2Lisbon • Conexões Reais em Terras Lusas</em></p>
+            </div>
+
+        </div> </div> <script>
+        const body = document.body;
+        let throttle = false;
+
+        function createLeaf(x, y) {
+            const leaf = document.createElement('div');
+            leaf.innerText = '🍁'; // O emoji
+            leaf.classList.add('leaf');
             
-            <li><strong>Democracia Real:</strong> Quer mudar a descrição? Criar um evento? Sugerir algo novo? Use as <strong>Enquetes</strong>. Aqui a maioria decide e a gente respeita.</li>
+            // Posição inicial (onde o dedo/mouse está)
+            leaf.style.left = x + 'px';
+            leaf.style.top = y + 'px';
             
-            <li><strong>Proteção do Grupo (Remoção):</strong> Se alguém quebrar a harmonia, resolvemos de duas formas:
-                <br>A) <strong>Votação:</strong> O grupo decide junto.
-                <br>B) <strong>O Padrinho Resolve:</strong> Se você convidou, você tem autonomia total para remover seu convidado, sem burocracia.
-            </li>
-        </ul>
+            // Aleatoriedade do tamanho e rotação
+            const size = Math.random() * 20 + 10; // entre 10px e 30px
+            leaf.style.fontSize = size + 'px';
+            leaf.style.transform = `rotate(${Math.random() * 360}deg)`;
 
-        <div class="disclaimer">
-            <p><strong>Dica Pro:</strong> Fique de olho no Drive e nos links de jogos. A diversão acontece lá também!</p>
-            <p><em>Beck2Lisbon • Conexões Reais em Terras Lusas</em></p>
-        </div>
+            body.appendChild(leaf);
 
-    </div>
+            // Física simples: Empurrar a folha para uma direção aleatória
+            // setTimeout para garantir que o CSS transition funcione após o append
+            setTimeout(() => {
+                const moveX = (Math.random() - 0.5) * 200; // Move horizontalmente
+                const moveY = Math.random() * 150 + 50;   // Move para baixo (gravidade)
+                const rotate = Math.random() * 720;
+                
+                leaf.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${rotate}deg)`;
+                leaf.style.opacity = '0'; // Desaparece suavemente
+            }, 10);
+
+            // Limpeza do DOM
+            setTimeout(() => {
+                leaf.remove();
+            }, 1000); // Remove após 1 segundo
+        }
+
+        function handleInteraction(e) {
+            // Se o alvo do evento for o cartão principal ou seus filhos, não faz nada
+            if (e.target.closest('.main-card')) return;
+
+            // Controle de performance (Throttle) - cria folhas a cada 50ms max
+            if (throttle) return;
+            throttle = true;
+            setTimeout(() => throttle = false, 50);
+
+            let x, y;
+            if (e.type.includes('touch')) {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY + window.scrollY; // Considera o scroll
+            } else {
+                x = e.clientX;
+                y = e.clientY + window.scrollY;
+            }
+
+            createLeaf(x, y);
+        }
+
+        // Event Listeners
+        window.addEventListener('mousemove', handleInteraction);
+        window.addEventListener('touchmove', handleInteraction);
+        // Adiciona click/tap também para testar fácil
+        window.addEventListener('click', handleInteraction);
+
+    </script>
 </body>
 
 </html>
